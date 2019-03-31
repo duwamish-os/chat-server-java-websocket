@@ -12,4 +12,6 @@ chat session close: 1 ## after refresh
 chat session start: 2
 ```
 
+session will be closed once the tab of a browser is closed.
+
 Also see spring ws server - https://github.com/duwamish-os/chat-server-spring-websocket

@@ -13,21 +13,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class IntroWebsocketServer {
 
     AtomicInteger client = new AtomicInteger(0);
-
-    Map<String, Session> sessions = new HashMap<>();
-
+    Notifier a = new Notifier();
+    
     @OnOpen
     public void open(@PathParam("clientId") String clientId, Session session) {
         client.getAndIncrement();
         //String id = getClientId(session);
         System.out.println("chat session start: " + clientId);
-        sessions.put(clientId, session);
+        IntrovSessionHandler.sessions.put(clientId, session);
     }
 
     @OnClose
     public void close(@PathParam("clientId") String clientId, Session session) {
         //String id = getClientId(session);
-        sessions.remove(clientId);
+        IntrovSessionHandler.sessions.remove(clientId);
         System.out.println("chat session closed: " + clientId);
     }
 
