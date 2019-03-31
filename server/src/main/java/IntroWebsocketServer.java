@@ -3,31 +3,48 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint("/chat")
+@ServerEndpoint("/chat/{clientId}")
 public class IntroWebsocketServer {
 
+    AtomicInteger client = new AtomicInteger(0);
+
+    Map<String, Session> sessions = new HashMap<>();
+
     @OnOpen
-    public void open(Session session) {
-        System.out.println("chat session start: " + session.getId());
+    public void open(@PathParam("clientId") String clientId, Session session) {
+        client.getAndIncrement();
+        //String id = getClientId(session);
+        System.out.println("chat session start: " + clientId);
+        sessions.put(clientId, session);
     }
 
     @OnClose
-    public void close(Session session) {
-        System.out.println("chat session close: " + session.getId());
+    public void close(@PathParam("clientId") String clientId, Session session) {
+        //String id = getClientId(session);
+        sessions.remove(clientId);
+        System.out.println("chat session closed: " + clientId);
     }
 
     @OnError
-    public void onError(Throwable error) {
+    public void onError(@PathParam("clientId") String clientId, Throwable error) {
         System.out.println(error.getMessage());
     }
 
     @OnMessage
-    public String handleMessage(String message, Session session) {
+    public String handleMessage(@PathParam("clientId") String clientId, String message, Session session) {
+        //decode message into JSON
         System.out.println("chat message session: " + session.getId());
         System.out.println("chat message: " + message);
         return "hi how are you doing?";
     }
 
+    private String getClientId(Session session) {
+        return session.getQueryString().split("=")[1];
+    }
 }
