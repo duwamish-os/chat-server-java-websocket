@@ -14,17 +14,17 @@ public class Notifier {
 
     private static void notifyPresence() {
         System.out.println("scheduling notifier");
-        scheduler.schedule(() -> {
+        scheduler.scheduleAtFixedRate(() -> {
             IntrovSessionHandler.sessions.forEach((clientId, session) -> {
                 try {
-                    System.out.println("[INFO] notifying " + clientId);
+                    System.out.println("[INFO] notifying client " + clientId);
                     session.getBasicRemote().sendText(LocalDateTime.now().toString());
                 } catch (IOException e) {
-                    e.printStackTrace();
                     //TODO write to failed events so that I can re-concile it in future
                     System.out.println("failed to notify " + clientId);
+                    e.printStackTrace();
                 }
             });
-        }, 30, TimeUnit.SECONDS);
+        }, 60, 30, TimeUnit.SECONDS);
     }
 }

@@ -13,13 +13,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class IntroWebsocketServer {
 
     AtomicInteger client = new AtomicInteger(0);
-    Notifier a = new Notifier();
+    Notifier notifier = new Notifier();
     
     @OnOpen
     public void open(@PathParam("clientId") String clientId, Session session) {
         client.getAndIncrement();
         //String id = getClientId(session);
-        System.out.println("chat session start: " + clientId);
+        System.out.println("chat session start: " + clientId + "/" + session.getId());
         IntrovSessionHandler.sessions.put(clientId, session);
     }
 
@@ -27,7 +27,7 @@ public class IntroWebsocketServer {
     public void close(@PathParam("clientId") String clientId, Session session) {
         //String id = getClientId(session);
         IntrovSessionHandler.sessions.remove(clientId);
-        System.out.println("chat session closed: " + clientId);
+        System.out.println("chat session closed: " + clientId + "/" + session.getId());
     }
 
     @OnError
@@ -38,8 +38,8 @@ public class IntroWebsocketServer {
     @OnMessage
     public String handleMessage(@PathParam("clientId") String clientId, String message, Session session) {
         //decode message into JSON
-        System.out.println("chat message session: " + session.getId());
-        System.out.println("chat message: " + message);
+        System.out.println("chat message session: " + clientId + "/" + session.getId());
+        System.out.println("chat message: " + clientId + "/" +message);
         return "hi how are you doing?";
     }
 
